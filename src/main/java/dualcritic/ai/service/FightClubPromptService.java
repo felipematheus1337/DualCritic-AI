@@ -39,6 +39,7 @@ public class FightClubPromptService {
     @Transactional
     @Cacheable("filmes")
     public FinalReviewResult generateFinalReview(String film) {
+        log.info("Generating final review for film: {}", film);
         BeanOutputConverter<FinalReviewResult> converter = new BeanOutputConverter<>(FinalReviewResult.class);
 
         FinalReviewResult result = chatClient
@@ -50,6 +51,7 @@ public class FightClubPromptService {
         FinalReviewResultEntity entity = toEntity(result);
         entity.setMovieName(film);
 
+        log.info("Saving final review result for film: {} to database", film);
         repository.save(entity);
 
         return result;
