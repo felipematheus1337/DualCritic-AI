@@ -9,6 +9,7 @@ public class FightClubController {
     @GetMapping
     public String index()  {
         return "Welcome to the Fight Club! This is the home of film critiques. " +
-                "To get reviews, send a POST request to /reviews with the film name.";
+                "To get reviews, send a GET request to /reviews with the film name.";
     }
+
 }
