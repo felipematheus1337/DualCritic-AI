@@ -19,6 +19,12 @@ spring:
       enabled: true
       path: /h2-console
 
+  cache:
+    cache-names:
+      - filmes
+    caffeine:
+        spec: maximumSize=100,expireAfterWrite=10m
+
   jpa:
     hibernate:
       ddl-auto: update

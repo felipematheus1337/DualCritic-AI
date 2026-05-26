@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ public class FightClubPromptService {
     }
 
     @Transactional
+    @Cacheable("filmes")
     public FinalReviewResult generateFinalReview(String film) {
         BeanOutputConverter<FinalReviewResult> converter = new BeanOutputConverter<>(FinalReviewResult.class);
 
