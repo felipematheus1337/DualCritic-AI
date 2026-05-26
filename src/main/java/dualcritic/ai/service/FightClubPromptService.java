@@ -6,7 +6,6 @@ import dualcritic.ai.domain.ResultReview;
 import dualcritic.ai.entity.FinalReviewResultEntity;
 import dualcritic.ai.entity.ResultReviewEntity;
 import dualcritic.ai.repository.FinalReviewResultEntityRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
@@ -23,6 +22,8 @@ public class FightClubPromptService {
     private static final ChatOptions options = ChatOptions
             .builder()
             .model("gpt-5.2")
+            .temperature(.99)
+            .topP(.95)
             .build();
 
 
