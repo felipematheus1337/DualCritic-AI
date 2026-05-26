@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DualCritic-AI | Fight Club Film Reviews</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Courier New', monospace;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 30, 0.9) 100%),
+                        url('wallpaper.jpg') center/cover fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            width: 95%;
+            background: linear-gradient(135deg, rgba(15, 15, 25, 0.95) 0%, rgba(25, 25, 40, 0.95) 100%);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 50px;
+            box-shadow: 0 0 50px rgba(255, 107, 53, 0.3), inset 0 0 20px rgba(255, 107, 53, 0.1);
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 107, 53, 0.8), 0 0 30px rgba(255, 107, 53, 0.5);
+            }
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #4db8ff;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: #ff6b35;
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .search-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #ff6b35;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+            border-color: #4db8ff;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .search-input-wrapper input::placeholder {
+            color: #666;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            color: #000;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-history {
+            background: linear-gradient(135deg, #4db8ff 0%, #2d9cdb 100%);
+            color: #000;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            box-shadow: 0 3px 10px rgba(77, 184, 255, 0.3);
+            margin: 5px;
+        }
+
+        .btn-history:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(77, 184, 255, 0.5);
+        }
+
+        .history-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #4db8ff;
+            border-radius: 8px;
+            background: rgba(77, 184, 255, 0.05);
+        }
+
+        .history-section h3 {
+            color: #4db8ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .no-history {
+            color: #666;
+            font-style: italic;
+        }
+
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 107, 53, 0.2);
+            border-top: 4px solid #ff6b35;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #ff6b35;
+            font-size: 1.2em;
+            font-weight: bold;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .critic-card {
+            background: linear-gradient(135deg, rgba(50, 50, 70, 0.9) 0%, rgba(30, 30, 50, 0.9) 100%);
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 25px rgba(255, 107, 53, 0.2);
+            animation: cardSlide 0.6s ease-out;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .critic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+            border-color: #4db8ff;
+        }
+
+        .critic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .critic-card:hover::before {
+            top: -10%;
+            right: -10%;
+        }
+
+        .critic-name {
+            font-size: 1.8em;
+            color: #ff6b35;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .critic-rating {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4db8ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(77, 184, 255, 0.5);
+        }
+
+        .critic-rating span {
+            font-size: 0.5em;
+            color: #ff6b35;
+        }
+
+        .critic-status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-approved {
+            background: rgba(50, 200, 50, 0.3);
+            color: #66ff66;
+            border: 1px solid #66ff66;
+        }
+
+        .status-disapproved {
+            background: rgba(255, 50, 50, 0.3);
+            color: #ff6666;
+            border: 1px solid #ff6666;
+        }
+
+        .status-mixed {
+            background: rgba(255, 200, 50, 0.3);
+            color: #ffcc66;
+            border: 1px solid #ffcc66;
+        }
+
+        .critic-review {
+            color: #b0b0b0;
+            font-size: 1em;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .movie-title {
+            font-size: 1.5em;
+            color: #4db8ff;
+            margin-bottom: 30px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            background: rgba(255, 50, 50, 0.2);
+            border: 2px solid #ff6666;
+            color: #ff9999;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .success-animation {
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0.95);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 500;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .clear-history-btn {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff4444 100%);
+            color: #fff;
+            padding: 8px 15px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            box-shadow: 0 3px 10px rgba(255, 50, 50, 0.3);
+        }
+
+        .clear-history-btn:hover {
+            box-shadow: 0 5px 15px rgba(255, 50, 50, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .search-section {
+                flex-direction: column;
+            }
+
+            .search-input-wrapper {
+                max-width: 100%;
+            }
+
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .film-not-found {
+            text-align: center;
+            color: #ff9999;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="stars-background" id="starsBackground"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚔️ DualCritic-AI ⚔️</h1>
+            <p>The Fight Club of Film Reviews</p>
+            <p class="tagline">Where your favorite movies get brutally honest critiques</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-input-wrapper">
+                <input
+                    type="text"
+                    id="filmInput"
+                    placeholder="Enter a film name..."
+                    autocomplete="off"
+                >
+            </div>
+            <button id="searchBtn" class="btn btn-primary">Get Reviews</button>
+            <button id="toggleFireworks" class="btn btn-primary" title="Toggle Fireworks!">🎆</button>
+        </div>
+
+        <div class="history-section">
+            <h3>📽️ Search History</h3>
+            <div id="historyContainer" class="history-list">
+                <span class="no-history">No history yet. Search for a film!</span>
+            </div>
+            <button id="clearHistoryBtn" class="btn clear-history-btn" style="display: none;">Clear History</button>
+        </div>
+
+        <div id="resultsContainer" class="results-container"></div>
+    </div>
+
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text">The LLM is thinking... 🤔</div>
+    </div>
+
+    <script>
+        // ==================== INITIALIZATION ====================
+        const API_ENDPOINT = '/reviews';
+        const HISTORY_KEY = 'dualcritic_history';
+        let fireworksEnabled = true;
+        let searchHistory = [];
+
+        // Load history on page load
+        loadHistory();
+        createStarField();
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('filmInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchFilm();
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', searchFilm);
+        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+        document.getElementById('toggleFireworks').addEventListener('click', () => {
+            fireworksEnabled = !fireworksEnabled;
+            document.getElementById('toggleFireworks').style.opacity = fireworksEnabled ? '1' : '0.5';
+        });
+
+        // ==================== SEARCH FUNCTIONALITY ====================
+        async function searchFilm() {
+            const filmInput = document.getElementById('filmInput');
+            const filmName = filmInput.value.trim();
+
+            if (!filmName) {
+                showError('Please enter a film name!');
+                return;
+            }
+
+            showLoader(true);
+            try {
+                const response = await fetch(`${API_ENDPOINT}?film=${encodeURIComponent(filmName)}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Add to history
+                addToHistory(filmName);
+
+                // Display results
+                displayResults(data, filmName);
+
+                // Trigger celebrations
+                if (fireworksEnabled) {
+                    createFireworks();
+                }
+                triggerSuccessAnimation();
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`Failed to get reviews for "${filmName}". Please try again.`);
+            } finally {
+                showLoader(false);
+                filmInput.value = '';
+            }
+        }
+
+        // ==================== RESULTS DISPLAY ====================
+        function displayResults(data, filmName) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+
+            const movieTitle = document.createElement('div');
+            movieTitle.className = 'movie-title';
+            movieTitle.textContent = `Film: ${filmName}`;
+            container.appendChild(movieTitle);
+
+            // Script Critic
+            if (data.scriptCritic) {
+                container.appendChild(createCriticCard(
+                    '📜 Script Critic',
+                    data.scriptCritic,
+                    '#ff6b35'
+                ));
+            }
+
+            // Tyler Durden
+            if (data.durdenCritic) {
+                container.appendChild(createCriticCard(
+                    '💣 Tyler Durden',
+                    data.durdenCritic,
+                    '#ff4444'
+                ));
+            }
+
+            // Narrator
+            if (data.narratorCritic) {
+                container.appendChild(createCriticCard(
+                    '🎙️ The Narrator',
+                    data.narratorCritic,
+                    '#4db8ff'
+                ));
+            }
+        }
+
+        function createCriticCard(name, review, accentColor) {
+            const card = document.createElement('div');
+            card.className = 'critic-card';
+
+            const status = review.status || 'UNKNOWN';
+            const statusClass = getStatusClass(status);
+
+            card.innerHTML = `
+                <div class="critic-name" style="color: ${accentColor}">${name}</div>
+                <div class="critic-rating">
+                    ${review.rating ?? 'N/A'}<span>/10</span>
+                </div>
+                <div class="critic-status ${statusClass}">
+                    ${status}
+                </div>
+                <div class="critic-review">
+                    ${review.about || 'No review provided.'}
+                </div>
+            `;
+
+            return card;
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'status-mixed';
+            const upperStatus = status.toUpperCase();
+            if (upperStatus.includes('APPROVED')) return 'status-approved';
+            if (upperStatus.includes('DISAPPROVED')) return 'status-disapproved';
+            return 'status-mixed';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        // ==================== LOADER ====================
+        function showLoader(show) {
+            const loader = document.getElementById('loader');
+            loader.style.display = show ? 'block' : 'none';
+        }
+
+        // ==================== HISTORY MANAGEMENT ====================
+        function addToHistory(filmName) {
+            if (!searchHistory.includes(filmName)) {
+                searchHistory.unshift(filmName);
+                if (searchHistory.length > 20) {
+                    searchHistory.pop();
+                }
+                saveHistory();
+                updateHistoryDisplay();
+            }
+        }
+
+        function loadHistory() {
+            const saved = localStorage.getItem(HISTORY_KEY);
+            searchHistory = saved ? JSON.parse(saved) : [];
+            updateHistoryDisplay();
+        }
+
+        function saveHistory() {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(searchHistory));
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('historyContainer');
+            const clearBtn = document.getElementById('clearHistoryBtn');
+
+            if (searchHistory.length === 0) {
+                container.innerHTML = '<span class="no-history">No history yet. Search for a film!</span>';
+                clearBtn.style.display = 'none';
+            } else {
+                container.innerHTML = searchHistory.map(film =>
+                    `<button class="btn btn-history" onclick="replaySearch('${film.replace(/'/g, "\\'")}')">
+                        📺 ${film}
+                    </button>`
+                ).join('');
+                clearBtn.style.display = 'inline-block';
+            }
+        }
+
+        function replaySearch(filmName) {
+            document.getElementById('filmInput').value = filmName;
+            searchFilm();
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history?')) {
+                searchHistory = [];
+                saveHistory();
+                updateHistoryDisplay();
+                document.getElementById('resultsContainer').innerHTML = '';
+            }
+        }
+
+        // ==================== ANIMATIONS ====================
+        function triggerSuccessAnimation() {
+            const container = document.getElementById('resultsContainer');
+            container.classList.add('success-animation');
+
+            setTimeout(() => {
+                container.classList.remove('success-animation');
+            }, 600);
+        }
+
+        function createStarField() {
+            const container = document.getElementById('starsBackground');
+            const starCount = 50;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // ==================== FIREWORKS ====================
+        let fireworksAnimationId = null;
+
+        function createFireworks() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+
+            // Create explosion particles
+            for (let i = 0; i < 100; i++) {
+                const angle = (Math.random() * Math.PI * 2);
+                const velocity = 4 + Math.random() * 8;
+
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: Math.cos(angle) * velocity,
+                    vy: Math.sin(angle) * velocity,
+                    life: 1,
+                    color: ['#ff6b35', '#4db8ff', '#ff4444', '#66ff66'][Math.floor(Math.random() * 4)]
+                });
+            }
+
+            // Additional random explosions
+            for (let j = 0; j < 3; j++) {
+                setTimeout(() => {
+                    for (let i = 0; i < 80; i++) {
+                        const angle = (Math.random() * Math.PI * 2);
+                        const velocity = 3 + Math.random() * 6;
+
+                        particles.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height * 0.6,
+                            vx: Math.cos(angle) * velocity,
+                            vy: Math.sin(angle) * velocity + 1,
+                            life: 1,
+                            color: ['#ff6b35', '#4db8ff', '#ff4444', '#66ff66', '#ffcc66'][Math.floor(Math.random() * 5)]
+                        });
+                    }
+                }, j * 200);
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let activeParticles = 0;
+
+                particles.forEach((p, index) => {
+                    if (p.life > 0) {
+                        activeParticles++;
+
+                        // Update position
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.2; // gravity
+                        p.life -= 0.015;
+
+                        // Draw particle
+                        ctx.globalAlpha = p.life;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                ctx.globalAlpha = 1;
+
+                if (activeParticles > 0) {
+                    fireworksAnimationId = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            animate();
+        }
+
+        // Resize handler for canvas
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('particles');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
+
