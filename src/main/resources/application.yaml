@@ -8,6 +8,12 @@ spring:
     username: sa
     password:
 
+  ai:
+    openai:
+        api-key: ${OPENAI_API_KEY}
+        base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+        timeout: 30s
+
   h2:
     console:
       enabled: true
